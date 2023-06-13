@@ -7,4 +7,4 @@ resources:
        ref: main
  
 extends:
-  template: main.yml@templates
+  template: mail.yml@templates
