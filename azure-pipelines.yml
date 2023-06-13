@@ -1,0 +1,10 @@
+resources:
+   repositories:
+     - repository: templates
+       type: github
+       name: ljpgluisjop/azdevops-prue
+       endpoint: github.com_ljpgluisjop
+       ref: main
+ 
+extends:
+  template: main.yml@templates
