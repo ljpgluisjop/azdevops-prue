@@ -1,14 +1,14 @@
 stages:
 - stage: 'build'
    displayName: 'Copilar la aplicacions'
-    jobs:
-      - job: 'build'
-        pool:
-          vmImage: ubuntu-latest
+   jobs:
+     - job: 'build'
+       pool:
+         vmImage: ubuntu-latest
 
-        steps:
-        - task: CmdLine@2
-          displayName: Git fetch --unshallow
-          inputs:
-            script: |
-              echo 'prueba'
+       steps:
+       - task: CmdLine@2
+         displayName: Git fetch --unshallow
+         inputs:
+           script: |
+             echo 'prueba'
