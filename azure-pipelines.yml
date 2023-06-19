@@ -1,10 +1,68 @@
-resources:
-   repositories:
-     - repository: templates
-       type: github
-       name: ljpgluisjop/azdevops-prue
-       endpoint: github.com_ljpgluisjop
-       ref: main
- 
-extends:
-  template: /mail.yml@templates
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    version: '3.x'
+
+#Enable gitcommands using this account
+- checkout: self
+  persistCredentials: true
+
+#git fetch --unshallow
+- task: CmdLine@2
+  displayName: Git fetch --unshallow
+  inputs:
+    script: |
+        git fetch --unshallow
+
+#Config gitversion 5.3.x
+- task: gitversion/setup@0
+  displayName: 'Setup git version'
+  inputs:
+    versionSpec: '5.3.x'
+
+#calculate the version of source code
+- task: gitversion/execute@0
+  displayName: 'Calculate SemVer'
+
+#print in console current ersion
+- script: echo current version is $(GitVersion.SemVer)
+  displayName: 'Display calculated version'
+
+#setting git user
+- task: CmdLine@2
+  displayName: Init git global config
+  inputs:
+    script: |
+        git config --global user.email "EMAIL-OF-PIPELINE-USER"
+        git config --global user.name "Pipeline"  
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    mavenOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.11'
+    jdkArchitectureOption: 'x64'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    goals: 'package  deploy:deploy-file'      
+    mavenAuthenticateFeed: true
+    options: '-X -P luisjopazdevops -Dpackaging="jar" -DrepositoryId="cursoAzArtifacts1" -Durl="https://pkgs.dev.azure.com/luisjopg/curso-az/_packaging/cursoAzArtifacts1/maven/v1" -DgroupId="com.digitalthinking" -DartifactId="common-library" -Dversion="$(GitVersion.SemVer)" -Dfile="$(System.DefaultWorkingDirectory)/target/common-library-0.0.3-SNAPSHOT.jar"'
+
+#create Tag after publish the library
+- task: CmdLine@2
+  displayName: Create Git tag for current version
+  inputs:
+    script: |
+      git tag -a $(GitVersion.SemVer) -m "Creating tag with new $(GitVersion.SemVer)"
+      git push origin $(GitVersion.SemVer)
