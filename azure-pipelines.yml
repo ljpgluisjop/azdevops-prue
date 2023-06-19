@@ -1,10 +1,9 @@
 resources:
-   repositories:
-     - repository: templates
-       type: github
-       name: ljpgluisjop/data-pipeline
-       endpoint: nuevotoken
-       ref: main
-
+  repositories:
+    - repository: templates
+      type: github
+      name: ljpgluisjop/data-pipeline
+      endpoint: nuevotoken
+      ref: main
 extends:
-  template: main.yml@templates
+  template: pipelines/main.yml@templates
