@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
-- main
+- none
 
 pool:
   vmImage: ubuntu-latest
@@ -20,10 +20,10 @@ steps:
 
 #git fetch --unshallow
 - task: CmdLine@2
-  displayName: Git fetch --unshallow
+  displayName: Git fetch #--unshallow
   inputs:
     script: |
-        git fetch --unshallow
+        git fetch 
 
 #Config gitversion 5.3.x
 - task: gitversion/setup@0
