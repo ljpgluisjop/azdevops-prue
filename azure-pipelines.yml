@@ -8,4 +8,4 @@ resources:
       endpoint: nuevotoken
       ref: main
 extends:
-  template: pipelines/main.yml@templates
+  template: pipelines/main.yaml@templates
